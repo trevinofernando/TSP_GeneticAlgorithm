@@ -166,27 +166,24 @@ public class Chromo implements Comparable<Chromo> {
 			j = (int) (randnum * Parameters.popSize);
 			return (j);
 		case 2: // Tournament Selection
-
-			// 1. Select X individuals from populations. X = 2 for now
-			randnum = Search.r.nextDouble();
-			j = (int) (randnum * Parameters.popSize);
-			randnum = Search.r.nextDouble();
-			k = (int) (randnum * Parameters.popSize);
-
-			// 2. With probability k, pick higher fit individual. k = 0.75 for now
-			if (Search.member[j].proFitness < Search.member[k].proFitness) {
-				// Swap J and K to have J as the bigger number
-				j = j + k;
-				k = j - k;
-				j = j - k;
+			int candidate[4], temp;
+			for (int i=0; i<4; ++i)
+				candidate[i] = (int) (Search.r.nextDouble()*Parameters.popSize);
+			for (int i = 3; i > 0; i--) {
+				for (int j = 0; j < i; j++) {
+					if (Search.member[candidate[j]].proFitness > Search.member[candidate[j+1]].proFitness) {
+						temp = candidatej[j];
+						candidate[j] = candidate[j + 1];
+						candidate[j + 1] = temp;					}
+				}
 			}
-			randnum = Search.r.nextDouble();
-			if (randnum > 0.75)
-				return (k); // return low fit number
-			else
-				return (j); // return high fit number
+			for (int i = 0; i<3; i++)
+				if (Search.r.nextDouble()<0.6)
+					return candidate[i];
+			return candidate[3];
 
-		case 4: // Rank Selection
+
+		/*case 4: // Rank Selection
 			Arrays.sort(Search.member);
 			randnum = Search.r.nextDouble();
 			k = (int) (randnum * ((Parameters.popSize * (Parameters.popSize + 1)) / 2));
@@ -195,7 +192,7 @@ public class Chromo implements Comparable<Chromo> {
 				if (k < rWheel)
 					return (j);
 			}
-			break;
+			break;*/
 
 		default:
 			System.out.println("ERROR - No selection method selected");
