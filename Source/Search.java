@@ -54,7 +54,7 @@ public class Search {
 	private static int TmemberIndex;
 	private static double TmemberFitness;
 
-	private static double fitnessStats[][]; // 0=Avg, 1=Best
+	private static double fitnessStats[][]; // 0=Avg, 1=Best, 2=StdDev Avg, 3=StdDev Best
 
 	/*******************************************************************************
 	 * CONSTRUCTORS *
