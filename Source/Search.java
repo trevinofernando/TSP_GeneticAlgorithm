@@ -54,7 +54,7 @@ public class Search {
 	private static int TmemberIndex;
 	private static double TmemberFitness;
 
-	private static double fitnessStats[][]; // 0=Avg, 1=Best
+	private static double fitnessStats[][]; // 0=Avg, 1=Best, 2=StdDev Avg, 3=StdDev Best
 
 	/*******************************************************************************
 	 * CONSTRUCTORS *
@@ -110,8 +110,14 @@ public class Search {
 		r.setSeed(Parameters.seed);
 		memberIndex = new int[Parameters.popSize];
 		memberFitness = new double[Parameters.popSize];
-		member = new Chromo[Parameters.popSize];
-		child = new Chromo[Parameters.popSize];
+		if (!Parameter.problemType.equals("TSP"){
+			member = new Chromo[Parameters.popSize];
+			child = new Chromo[Parameters.popSize];
+		}
+		else{
+			member = new TSPChromo[Parameters.popSize];
+			child = new TSPChromo[Parameters.popSize];
+		}
 		bestOfGenChromo = new Chromo();
 		bestOfRunChromo = new Chromo();
 		bestOverAllChromo = new Chromo();

@@ -34,6 +34,8 @@ public class Parameters {
 	public static double xoverRate;
 	public static int mutationType;
 	public static double mutationRate;
+	public static double mutationRateISM;
+	public static double mutationRateDM;
 
 	public static long seed;
 	public static int numGenes;
@@ -82,6 +84,12 @@ public class Parameters {
 		mutationType = Integer.parseInt(parmInput.readLine().substring(30).trim());// 1 = Flip Bit
 
 		mutationRate = Double.parseDouble(parmInput.readLine().substring(30).trim());// from 0 to 1, Use "0" to turn off
+		
+		if (problemType.equals("TSP")){
+			mutationRateISM = Double.parseDouble(parmInput.readLine().substring(30).trim());// from 0 to 1, Use "0" to turn off
+			mutationRateDM = Double.parseDouble(parmInput.readLine().substring(30).trim());// from 0 to 1, Use "0" to turn off
+		}
+
 																						// mutation
 
 		seed = Long.parseLong(parmInput.readLine().substring(30).trim());
@@ -182,6 +190,10 @@ public class Parameters {
 		output.write("Crossover Rate               :  " + xoverRate + "\n");
 		output.write("Mutation Type                :  " + mutationType + "\n");
 		output.write("Mutation Rate                :  " + mutationRate + "\n");
+		if (problemType.equals("TSP")){
+			output.write("Mutation Rate ISM            :  " + mutationRateISM + "\n");
+			output.write("Mutation Rate DM             :  " + mutationRateDM + "\n");
+		}
 
 		output.write("Random Number Seed           :  " + seed + "\n");
 		output.write("Number of Genes/Points       :  " + numGenes + "\n");
