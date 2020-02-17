@@ -110,8 +110,14 @@ public class Search {
 		r.setSeed(Parameters.seed);
 		memberIndex = new int[Parameters.popSize];
 		memberFitness = new double[Parameters.popSize];
-		member = new Chromo[Parameters.popSize];
-		child = new Chromo[Parameters.popSize];
+		if (!Parameter.problemType.equals("TSP"){
+			member = new Chromo[Parameters.popSize];
+			child = new Chromo[Parameters.popSize];
+		}
+		else{
+			member = new TSPChromo[Parameters.popSize];
+			child = new TSPChromo[Parameters.popSize];
+		}
 		bestOfGenChromo = new Chromo();
 		bestOfRunChromo = new Chromo();
 		bestOverAllChromo = new Chromo();
