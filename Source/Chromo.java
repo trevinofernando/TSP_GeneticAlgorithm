@@ -166,33 +166,30 @@ public class Chromo implements Comparable<Chromo> {
 			j = (int) (randnum * Parameters.popSize);
 			return (j);
 		case 2: // Tournament Selection
-			int candidate[4], temp;
-			for (int i=0; i<4; ++i)
-				candidate[i] = (int) (Search.r.nextDouble()*Parameters.popSize);
+			int temp;
+			int candidate[] = new int[4];
+			for (int i = 0; i < 4; ++i)
+				candidate[i] = (int) (Search.r.nextDouble() * Parameters.popSize);
 			for (int i = 3; i > 0; i--) {
-				for (int j = 0; j < i; j++) {
-					if (Search.member[candidate[j]].proFitness > Search.member[candidate[j+1]].proFitness) {
-						temp = candidatej[j];
+				for (j = 0; j < i; j++) {
+					if (Search.member[candidate[j]].proFitness > Search.member[candidate[j + 1]].proFitness) {
+						temp = candidate[j];
 						candidate[j] = candidate[j + 1];
-						candidate[j + 1] = temp;					}
+						candidate[j + 1] = temp;
+					}
 				}
 			}
-			for (int i = 0; i<3; i++)
-				if (Search.r.nextDouble()<0.6)
+			for (int i = 0; i < 3; i++)
+				if (Search.r.nextDouble() < 0.6)
 					return candidate[i];
 			return candidate[3];
 
-
-		/*case 4: // Rank Selection
-			Arrays.sort(Search.member);
-			randnum = Search.r.nextDouble();
-			k = (int) (randnum * ((Parameters.popSize * (Parameters.popSize + 1)) / 2));
-			for (j = 0; j < Parameters.popSize; j++) {
-				rWheel = rWheel + j + 1;
-				if (k < rWheel)
-					return (j);
-			}
-			break;*/
+		/*
+		 * case 4: // Rank Selection Arrays.sort(Search.member); randnum =
+		 * Search.r.nextDouble(); k = (int) (randnum * ((Parameters.popSize *
+		 * (Parameters.popSize + 1)) / 2)); for (j = 0; j < Parameters.popSize; j++) {
+		 * rWheel = rWheel + j + 1; if (k < rWheel) return (j); } break;
+		 */
 
 		default:
 			System.out.println("ERROR - No selection method selected");
