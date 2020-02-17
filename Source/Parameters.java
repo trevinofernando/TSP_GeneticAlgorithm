@@ -26,6 +26,8 @@ public class Parameters {
 	public static int genCap;
 	public static int fitCap;
 
+	public static int tspSize = 10;
+
 	public static String minORmax;
 	public static int selectType;
 	public static int scaleType;

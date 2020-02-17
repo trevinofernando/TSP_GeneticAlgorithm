@@ -95,9 +95,7 @@ public class Search {
 		// the appropriate class file (extending FitnessFunction.java) and add
 		// an else_if block below to instantiate the problem.
 
-		if (Parameters.problemType.equals("NM")) {
-			problem = new NumberMatch();
-		} else if (Parameters.problemType.equals("OM")) {
+		if (Parameters.problemType.equals("OM")) {
 			problem = new OneMax();
 		} else if (Parameters.problemType.equals("TSP")) {
 			problem = new TSP();

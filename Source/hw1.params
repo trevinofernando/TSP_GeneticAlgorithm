@@ -1,33 +1,32 @@
-Experiment ID                :numbermatch
-Problem Type                 :NM
-Data Input File Name         :indata.NM.txt
-Number of Runs               :3
+Experiment ID                :tsp1
+Problem Type                 :TSP
+Data Input File Name         :NA
+Number of Runs               :50
 Generations per Run          :100
-Population Size              :100
+Population Size              :1000
 Selection Method (1)         :1
-Fitness Scaling Type (2)     :1
+Fitness Scaling Type (2)     :2
 Crossover Type (3)           :1
-Crossover Rate (4)           :1.0
+Crossover Rate (4)           :0.9
 Mutation Type (5)            :1
-Mutation Rate (6)            :.01
+Mutation Rate (6)            :0.001
 Random Number Seed           :75982
-Number of Genes/Points (7)   :8
-Size of Genes (18)           :9
+Number of Genes/Points (7)   :1
+Size of Genes (18)           :200
 
 Notes:
 
 1)  Selection Type Codes    1 = Proportional Selection
 							2 = Tournament Selection
 							3 = Random Selection
+For Rank Selection use Fitness Scaling Type to 2 or 3 with Selection Type 1
 
 2)  Fitness Scaling Type    0 = Scale for Maximization (no change to raw fitness)
 							1 = Scale for Minimization (reciprocal of raw fitness)
 							2 = Rank for Maximization
 							3 = Rank for Minimization
 
-3)  Crossover Type Codes    1 = Single Point Crossover
-							2 = Two Point Crossover
-							3 = Uniform Crossover
+3)  Crossover Type Codes    1 = Order Crossover (OX1)
 
 4)  Crossover Rates from 0 to 1, Use "0" to turn off crossover
 

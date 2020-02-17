@@ -13,7 +13,7 @@ public class Chromo implements Comparable<Chromo> {
 	 * INSTANCE VARIABLES *
 	 *******************************************************************************/
 
-	public String chromo;
+	public List<Integer> chromo;
 	public double rawFitness; // evaluated
 	public double sclFitness; // scaled
 	public double proFitness; // proportionalized
@@ -30,19 +30,14 @@ public class Chromo implements Comparable<Chromo> {
 
 	public Chromo() {
 
-		// Set gene values to a random sequence of 1's and 0's
-		char geneBit;
-		chromo = "";
-		for (int i = 0; i < Parameters.numGenes; i++) {
-			for (int j = 0; j < Parameters.geneSize; j++) {
-				randnum = Search.r.nextDouble();
-				if (randnum > 0.5)
-					geneBit = '0';
-				else
-					geneBit = '1';
-				this.chromo = chromo + geneBit;
-			}
+		// set to a random permutation
+
+		chromo = new ArrayList<Integer>(Parameters.tspSize);
+		for (int i = 0; i < Parameters.tspSize; i++) {
+			chromo.add(i+1);
 		}
+
+		Collections.shuffle(chromo);
 
 		this.rawFitness = -1; // Fitness not yet evaluated
 		this.sclFitness = -1; // Fitness not yet scaled
@@ -63,51 +58,6 @@ public class Chromo implements Comparable<Chromo> {
 		return 0;
 	}
 
-	// Get Alpha Represenation of a Gene **************************************
-
-	public String getGeneAlpha(int geneID) {
-		int start = geneID * Parameters.geneSize;
-		int end = (geneID + 1) * Parameters.geneSize;
-		String geneAlpha = this.chromo.substring(start, end);
-		return (geneAlpha);
-	}
-
-	// Get Integer Value of a Gene (Positive or Negative, 2's Compliment) ****
-
-	public int getIntGeneValue(int geneID) {
-		String geneAlpha = "";
-		int geneValue;
-		char geneSign;
-		char geneBit;
-		geneValue = 0;
-		geneAlpha = getGeneAlpha(geneID);
-		for (int i = Parameters.geneSize - 1; i >= 1; i--) {
-			geneBit = geneAlpha.charAt(i);
-			if (geneBit == '1')
-				geneValue = geneValue + (int) Math.pow(2.0, Parameters.geneSize - i - 1);
-		}
-		geneSign = geneAlpha.charAt(0);
-		if (geneSign == '1')
-			geneValue = geneValue - (int) Math.pow(2.0, Parameters.geneSize - 1);
-		return (geneValue);
-	}
-
-	// Get Integer Value of a Gene (Positive only) ****************************
-
-	public int getPosIntGeneValue(int geneID) {
-		String geneAlpha = "";
-		int geneValue;
-		char geneBit;
-		geneValue = 0;
-		geneAlpha = getGeneAlpha(geneID);
-		for (int i = Parameters.geneSize - 1; i >= 0; i--) {
-			geneBit = geneAlpha.charAt(i);
-			if (geneBit == '1')
-				geneValue = geneValue + (int) Math.pow(2.0, Parameters.geneSize - i - 1);
-		}
-		return (geneValue);
-	}
-
 	// Mutate a Chromosome Based on Mutation Type *****************************
 
 	public void doMutation() {
@@ -117,7 +67,7 @@ public class Chromo implements Comparable<Chromo> {
 
 		switch (Parameters.mutationType) {
 
-		case 1: // Replace with new random number
+		/* case 1: // Replace with new random number
 
 			for (int j = 0; j < (Parameters.geneSize * Parameters.numGenes); j++) {
 				x = this.chromo.charAt(j);
@@ -131,7 +81,7 @@ public class Chromo implements Comparable<Chromo> {
 				mutChromo = mutChromo + x;
 			}
 			this.chromo = mutChromo;
-			break;
+			break; */
 
 		default:
 			System.out.println("ERROR - No mutation method selected");
@@ -165,7 +115,7 @@ public class Chromo implements Comparable<Chromo> {
 			randnum = Search.r.nextDouble();
 			j = (int) (randnum * Parameters.popSize);
 			return (j);
-		case 2: // Tournament Selection
+		/* case 2: // Tournament Selection
 			int candidate[4], temp;
 			for (int i=0; i<4; ++i)
 				candidate[i] = (int) (Search.r.nextDouble()*Parameters.popSize);
@@ -180,7 +130,7 @@ public class Chromo implements Comparable<Chromo> {
 			for (int i = 0; i<3; i++)
 				if (Search.r.nextDouble()<0.6)
 					return candidate[i];
-			return candidate[3];
+			return candidate[3]; */
 
 
 		/*case 4: // Rank Selection
@@ -209,20 +159,46 @@ public class Chromo implements Comparable<Chromo> {
 
 		switch (Parameters.xoverType) {
 
-		case 1: // Single Point Crossover
+		case 1: // Order Crossover (OX1)
 
-			// Select crossover point
-			xoverPoint1 = 1 + (int) (Search.r.nextDouble() * (Parameters.numGenes * Parameters.geneSize - 1));
+			do {				
+				xoverPoint1 = Search.r.nextInt(Parameters.tspSize);
+				xoverPoint2 = Search.r.nextInt(Parameters.tspSize);				
+			} while ((xoverPoint1 == xoverPoint2) || (Math.abs(xoverPoint1 - xoverPoint2 + 1) == Parameters.tspSize));
+			
+			if (xoverPoint1 > xoverPoint2) {
+				int tmp;
+				tmp = xoverPoint1;
+				xoverPoint1 = xoverPoint2;
+				xoverPoint2 = tmp;				
+			}
 
-			// Create child chromosome from parental material
-			child1.chromo = parent1.chromo.substring(0, xoverPoint1) + parent2.chromo.substring(xoverPoint1);
-			child2.chromo = parent2.chromo.substring(0, xoverPoint1) + parent1.chromo.substring(xoverPoint1);
+			List<Integer> child1_temp = new ArrayList<Integer>(xoverPoint2 - xoverPoint1 + Parameters.tspSize + 1);
+			List<Integer> child2_temp = new ArrayList<Integer>(xoverPoint2 - xoverPoint1 + Parameters.tspSize + 1);
+
+			for (int i = xoverPoint1; i < xoverPoint2 + 1; i++) {
+				child1_temp.add(parent1.chromo.get(i));
+				child2_temp.add(parent2.chromo.get(i));
+			}
+
+			for (int i = xoverPoint2 + 1; i < xoverPoint2 + Parameters.tspSize + 1; i++) {
+				int index = i % Parameters.tspSize;
+				child1_temp.add(parent2.chromo.get(index));
+				child2_temp.add(parent1.chromo.get(index));
+			}
+
+			LinkedHashSet<Integer> child1_hashset = new LinkedHashSet<>(child1_temp);         
+			child1_temp = new ArrayList<>(child1_hashset);
+		
+			LinkedHashSet<Integer> child2_hashset = new LinkedHashSet<>(child2_temp);         
+			child2_temp = new ArrayList<>(child2_hashset);
+
+			for (int i = xoverPoint1; i < xoverPoint1 + Parameters.tspSize; i++) {
+				int index = i % Parameters.tspSize;
+				child1.chromo.set(index, child1_temp.get(i - xoverPoint1));
+				child2.chromo.set(index, child2_temp.get(i - xoverPoint1));
+			}
 			break;
-
-		case 2: // Two Point Crossover
-
-		case 3: // Uniform Crossover
-
 		default:
 			System.out.println("ERROR - Bad crossover method selected");
 		}
