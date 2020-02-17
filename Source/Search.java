@@ -95,7 +95,9 @@ public class Search {
 		// the appropriate class file (extending FitnessFunction.java) and add
 		// an else_if block below to instantiate the problem.
 
-		if (Parameters.problemType.equals("OM")) {
+		if (Parameters.problemType.equals("NM")) {
+			problem = new NumberMatch();
+		} else if (Parameters.problemType.equals("OM")) {
 			problem = new OneMax();
 		} else if (Parameters.problemType.equals("TSP")) {
 			problem = new TSP();
@@ -108,7 +110,7 @@ public class Search {
 		r.setSeed(Parameters.seed);
 		memberIndex = new int[Parameters.popSize];
 		memberFitness = new double[Parameters.popSize];
-		if (!Parameter.problemType.equals("TSP"){
+		if (!Parameters.problemType.equals("TSP")) {
 			member = new Chromo[Parameters.popSize];
 			child = new Chromo[Parameters.popSize];
 		}

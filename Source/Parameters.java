@@ -26,8 +26,6 @@ public class Parameters {
 	public static int genCap;
 	public static int fitCap;
 
-	public static int tspSize = 10;
-
 	public static String minORmax;
 	public static int selectType;
 	public static int scaleType;
@@ -42,6 +40,8 @@ public class Parameters {
 	public static long seed;
 	public static int numGenes;
 	public static int geneSize;
+
+	public static double distance[][]; // distance[City_A][City_B] == distance[City_B][City_A]
 
 	/*******************************************************************************
 	 * CONSTRUCTORS *
@@ -100,6 +100,56 @@ public class Parameters {
 		// is the number of bits in each gene. Number of Genes times Size
 		// gives the number of bits in each chromosome.
 
+		// Read cities
+		System.out.println("\nInput File Name is: " + dataInputFileName + "\n");
+		try (BufferedReader br = new BufferedReader(new FileReader(dataInputFileName))) {
+			String line;
+			String dimensionField = "DIMENSION: ";
+			int numCities = 0;
+			// Find dimension field
+			while ((line = br.readLine()) != null) {
+				if (line.startsWith(dimensionField)) {
+					numCities = Integer.parseInt(line.substring(dimensionField.length()));
+					// Skip next 2 lines:
+					br.readLine();
+					br.readLine();
+					break;
+				}
+			}
+			if (numCities == 0) {
+				System.out.println("\nFailed to read cities. Please check name of input file\n");
+				return;
+			} else {
+				System.out.println("\n" + numCities + "cities found.\nPlease wait...");
+			}
+			distance = new double[numCities + 1][numCities + 1]; // city 0 is a ghost city
+
+			String cityInfo[];
+			int i = 0, x = 0, y = 1;
+			double citiesCoordinates[][] = new double[numCities + 1][2];
+
+			while (i < numCities) {
+				line = br.readLine();
+				cityInfo = line.split(" ");
+				i++;
+				citiesCoordinates[i][x] = Double.valueOf(cityInfo[1]); // x coordinate
+				citiesCoordinates[i][y] = Double.valueOf(cityInfo[2]); // y coordinate
+			}
+
+			// padding city 0 as a ghost city
+			for (int j = 1; j <= numCities; j++) {
+				for (int k = 1; k <= numCities; k++) {
+					distance[j][k] = Distance(citiesCoordinates[j][x], citiesCoordinates[j][y], citiesCoordinates[k][x],
+							citiesCoordinates[k][y]);
+					// System.out.println("Calculating distance between: City "j + " and " + k +
+					// "\n");
+				}
+			}
+			System.out.println("\nDistances between all cities calculated successfully \n");
+			// Comment out this line when not debugging
+			// System.out.println(Arrays.deepToString(distances));
+		}
+
 		parmInput.close();
 
 		if (scaleType == 0 || scaleType == 2)
@@ -116,6 +166,10 @@ public class Parameters {
 	/*******************************************************************************
 	 * STATIC METHODS *
 	 *******************************************************************************/
+
+	public static double Distance(double x1, double y1, double x2, double y2) {
+		return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
+	}
 
 	public static void outputParameters(FileWriter output) throws java.io.IOException {
 
