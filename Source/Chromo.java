@@ -13,7 +13,7 @@ public class Chromo implements Comparable<Chromo> {
 	 * INSTANCE VARIABLES *
 	 *******************************************************************************/
 
-	public String chromo;
+	public int chromo[];
 	public double rawFitness; // evaluated
 	public double sclFitness; // scaled
 	public double proFitness; // proportionalized
@@ -29,21 +29,19 @@ public class Chromo implements Comparable<Chromo> {
 	 *******************************************************************************/
 
 	public Chromo() {
-
-		// Set gene values to a random sequence of 1's and 0's
-		char geneBit;
-		chromo = "";
-		for (int i = 0; i < Parameters.numGenes; i++) {
-			for (int j = 0; j < Parameters.geneSize; j++) {
-				randnum = Search.r.nextDouble();
-				if (randnum > 0.5)
-					geneBit = '0';
-				else
-					geneBit = '1';
-				this.chromo = chromo + geneBit;
-			}
+		chromo = new int[Parameters.numGenes+1];
+		for (int i = 1; i < Parameters.numGenes+1; i++)
+			chromo[i] = i;
+		//Knuth's adaptation of Fisher-Yates shuffle, source wikipedia
+		int toSwap;
+		for (int i = Parameter.numGenes; i>1; i--){
+			toSwap = Search.r.nextDouble() * (i+1);
+			if (toSwap != i+1)
+				toSwap++;
+			int temp = chromo[toSwap];
+			chromo[toSwap] = chromo[i];
+			chromo[i] = temp;
 		}
-
 		this.rawFitness = -1; // Fitness not yet evaluated
 		this.sclFitness = -1; // Fitness not yet scaled
 		this.proFitness = -1; // Fitness not yet proportionalized
@@ -63,51 +61,6 @@ public class Chromo implements Comparable<Chromo> {
 		return 0;
 	}
 
-	// Get Alpha Represenation of a Gene **************************************
-
-	public String getGeneAlpha(int geneID) {
-		int start = geneID * Parameters.geneSize;
-		int end = (geneID + 1) * Parameters.geneSize;
-		String geneAlpha = this.chromo.substring(start, end);
-		return (geneAlpha);
-	}
-
-	// Get Integer Value of a Gene (Positive or Negative, 2's Compliment) ****
-
-	public int getIntGeneValue(int geneID) {
-		String geneAlpha = "";
-		int geneValue;
-		char geneSign;
-		char geneBit;
-		geneValue = 0;
-		geneAlpha = getGeneAlpha(geneID);
-		for (int i = Parameters.geneSize - 1; i >= 1; i--) {
-			geneBit = geneAlpha.charAt(i);
-			if (geneBit == '1')
-				geneValue = geneValue + (int) Math.pow(2.0, Parameters.geneSize - i - 1);
-		}
-		geneSign = geneAlpha.charAt(0);
-		if (geneSign == '1')
-			geneValue = geneValue - (int) Math.pow(2.0, Parameters.geneSize - 1);
-		return (geneValue);
-	}
-
-	// Get Integer Value of a Gene (Positive only) ****************************
-
-	public int getPosIntGeneValue(int geneID) {
-		String geneAlpha = "";
-		int geneValue;
-		char geneBit;
-		geneValue = 0;
-		geneAlpha = getGeneAlpha(geneID);
-		for (int i = Parameters.geneSize - 1; i >= 0; i--) {
-			geneBit = geneAlpha.charAt(i);
-			if (geneBit == '1')
-				geneValue = geneValue + (int) Math.pow(2.0, Parameters.geneSize - i - 1);
-		}
-		return (geneValue);
-	}
-
 	// Mutate a Chromosome Based on Mutation Type *****************************
 
 	public void doMutation() {
@@ -117,24 +70,62 @@ public class Chromo implements Comparable<Chromo> {
 
 		switch (Parameters.mutationType) {
 
-		case 1: // Replace with new random number
+			case 1: // Replace with new random number
 
-			for (int j = 0; j < (Parameters.geneSize * Parameters.numGenes); j++) {
-				x = this.chromo.charAt(j);
-				randnum = Search.r.nextDouble();
-				if (randnum < Parameters.mutationRate) {
-					if (x == '1')
-						x = '0';
-					else
-						x = '1';
+				for (int j = 0; j < (Parameters.geneSize * Parameters.numGenes); j++) {
+					x = this.chromo.charAt(j);
+					randnum = Search.r.nextDouble();
+					if (randnum < Parameters.mutationRate) {
+						if (x == '1')
+							x = '0';
+						else
+							x = '1';
+					}
+					mutChromo = mutChromo + x;
 				}
-				mutChromo = mutChromo + x;
-			}
-			this.chromo = mutChromo;
-			break;
+				this.chromo = mutChromo;
+				break;
+			case 2:
+				if (Search.r.nextDouble() < Parameters.mutationRate){
+					int oldLoc = Search.r.nextDouble() * Parameters.numGenes;
+					if (oldLoc != Parameters.numGenes)
+						oldLoc++;
+					int newLoc = Search.r.nextDouble() * Parameters.numGenes;
+					if (newLoc != Parameters.numGenes)
+						newLoc++;
+					int city = chromo[oldLoc];
+					for (int i = oldLoc; i != newLoc; i = (i==Parameters.numGenes)?1:i++)
+						chromo[i] = chromo[(i+1)%Parameters.numGenes + 1];
+					chromo[newLoc] = city;
+				}
+				break;
+			case 3:
+				if (Search.r.nextDouble() < Parameters.mutationRate){
+					int windowSize = Parameters.geneSize * (Search.r.nextDouble() * (Parameters.DMWindowEnd - Parameters.DMWindowBegin) + Parameters.DMWindowBegin);
+					if (windowSize < Parameters.geneSize){
+						int windowLoc = Paramters.Sesarch.r.nextDouble() * (Parameters.geneSize - windowSize + 1);
+						if (windowLoc != Parameters.geneSize - windowSize + 1)
+							windowLoc++;
+						int newLoc = Parameters.Search.r.nextDouble() * Parameters.geneSize;
+						if (newLoc != Parameters.geneSize)
+							newLoc++;
+						int window[] = new int[windowSize];
+						for (int i = 0; i<windowSize; i++)
+							window[i] = chromo[(i+windowLoc > Parameters.geneSize)? (i+windowLoc) % Parameters.geneSize + 1: i+windowLoc]; 
+						int temp;
+						for (int i = windowLoc; i != newLoc; i = (i==Parameters.numGenes)?1:i++){
+							temp = chromo[i];
+							chromo[i] = chromo[(i+windowSize > Parameters.geneSize)? (i+windowSize) % Parameters.geneSize +1: i+windowSize];
+							chromo[(i+windowSize > Parameters.geneSize)? (i+windowSize) % Parameters.geneSize +1: i+windowSize] = temp;
+						}
+						for (int i = 0; i<windowSize; i++)
+							chromo[(i+newLoc > Parameters.geneSize)? (i+newLoc) % Parameters.geneSize + 1: i+newLoc] = window[i];
+					}
+				}
+				break;
 
-		default:
-			System.out.println("ERROR - No mutation method selected");
+			default:
+				System.out.println("ERROR - No mutation method selected");
 		}
 	}
 
@@ -152,47 +143,48 @@ public class Chromo implements Comparable<Chromo> {
 
 		switch (Parameters.selectType) {
 
-		case 1: // Proportional Selection
-			randnum = Search.r.nextDouble();
-			for (j = 0; j < Parameters.popSize; j++) {
-				rWheel = rWheel + Search.member[j].proFitness;
-				if (randnum < rWheel)
-					return (j);
-			}
-			break;
+			<<<<<<< HEAD
+			case 1: // Proportional Selection
+				randnum = Search.r.nextDouble();
+				for (j = 0; j < Parameters.popSize; j++) {
+					rWheel = rWheel + Search.member[j].proFitness;
+					if (randnum < rWheel)
+						return (j);
+				}
+				break;
 
-		case 3: // Random Selection
-			randnum = Search.r.nextDouble();
-			j = (int) (randnum * Parameters.popSize);
-			return (j);
-		case 2: // Tournament Selection
-			int temp;
-			int candidate[] = new int[4];
-			for (int i = 0; i < 4; ++i)
-				candidate[i] = (int) (Search.r.nextDouble() * Parameters.popSize);
-			for (int i = 3; i > 0; i--) {
-				for (j = 0; j < i; j++) {
-					if (Search.member[candidate[j]].proFitness > Search.member[candidate[j + 1]].proFitness) {
-						temp = candidate[j];
-						candidate[j] = candidate[j + 1];
-						candidate[j + 1] = temp;
+			case 3: // Random Selection
+				randnum = Search.r.nextDouble();
+				j = (int) (randnum * Parameters.popSize);
+				return (j);
+			case 2: // Tournament Selection
+				int temp;
+				int candidate[] = new int[4];
+				for (int i = 0; i < 4; ++i)
+					candidate[i] = (int) (Search.r.nextDouble() * Parameters.popSize);
+				for (int i = 3; i > 0; i--) {
+					for (j = 0; j < i; j++) {
+						if (Search.member[candidate[j]].proFitness > Search.member[candidate[j + 1]].proFitness) {
+							temp = candidate[j];
+							candidate[j] = candidate[j + 1];
+							candidate[j + 1] = temp;
+						}
 					}
 				}
-			}
-			for (int i = 0; i < 3; i++)
-				if (Search.r.nextDouble() < 0.6)
-					return candidate[i];
-			return candidate[3];
+				for (int i = 0; i < 3; i++)
+					if (Search.r.nextDouble() < 0.6)
+						return candidate[i];
+				return candidate[3];
 
-		/*
-		 * case 4: // Rank Selection Arrays.sort(Search.member); randnum =
-		 * Search.r.nextDouble(); k = (int) (randnum * ((Parameters.popSize *
-		 * (Parameters.popSize + 1)) / 2)); for (j = 0; j < Parameters.popSize; j++) {
-		 * rWheel = rWheel + j + 1; if (k < rWheel) return (j); } break;
-		 */
+				/*
+				 * case 4: // Rank Selection Arrays.sort(Search.member); randnum =
+				 * Search.r.nextDouble(); k = (int) (randnum * ((Parameters.popSize *
+				 * (Parameters.popSize + 1)) / 2)); for (j = 0; j < Parameters.popSize; j++) {
+				 * rWheel = rWheel + j + 1; if (k < rWheel) return (j); } break;
+				 */
 
-		default:
-			System.out.println("ERROR - No selection method selected");
+			default:
+				System.out.println("ERROR - No selection method selected");
 		}
 		return (-1);
 	}
@@ -206,22 +198,22 @@ public class Chromo implements Comparable<Chromo> {
 
 		switch (Parameters.xoverType) {
 
-		case 1: // Single Point Crossover
+			case 1: // Single Point Crossover
 
-			// Select crossover point
-			xoverPoint1 = 1 + (int) (Search.r.nextDouble() * (Parameters.numGenes * Parameters.geneSize - 1));
+				// Select crossover point
+				xoverPoint1 = 1 + (int) (Search.r.nextDouble() * (Parameters.numGenes * Parameters.geneSize - 1));
 
-			// Create child chromosome from parental material
-			child1.chromo = parent1.chromo.substring(0, xoverPoint1) + parent2.chromo.substring(xoverPoint1);
-			child2.chromo = parent2.chromo.substring(0, xoverPoint1) + parent1.chromo.substring(xoverPoint1);
-			break;
+				// Create child chromosome from parental material
+				child1.chromo = parent1.chromo.substring(0, xoverPoint1) + parent2.chromo.substring(xoverPoint1);
+				child2.chromo = parent2.chromo.substring(0, xoverPoint1) + parent1.chromo.substring(xoverPoint1);
+				break;
 
-		case 2: // Two Point Crossover
+			case 2: // Two Point Crossover
 
-		case 3: // Uniform Crossover
+			case 3: // Uniform Crossover
 
-		default:
-			System.out.println("ERROR - Bad crossover method selected");
+			default:
+				System.out.println("ERROR - Bad crossover method selected");
 		}
 
 		// Set fitness values back to zero
