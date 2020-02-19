@@ -34,8 +34,8 @@ public class Parameters {
 	public static double xoverRate;
 	public static int mutationType;
 	public static double mutationRate;
-	public static double mutationRateISM;
-	public static double mutationRateDM;
+	public static double DMWindowBegin;
+	public static double DMWindowEnd;
 
 	public static long seed;
 	public static int numGenes;
@@ -85,9 +85,9 @@ public class Parameters {
 
 		mutationRate = Double.parseDouble(parmInput.readLine().substring(30).trim());// from 0 to 1, Use "0" to turn off
 		
-		if (problemType.equals("TSP")){
-			mutationRateISM = Double.parseDouble(parmInput.readLine().substring(30).trim());// from 0 to 1, Use "0" to turn off
-			mutationRateDM = Double.parseDouble(parmInput.readLine().substring(30).trim());// from 0 to 1, Use "0" to turn off
+		if (mutationType == 3){
+			DMWindowBegin = Double.parseDouble(parmInput.readLine().substring(30).trim());
+			DMWindowEnd = Double.parseDouble(parmInput.readLine().substring(30).trim());
 		}
 
 																						// mutation

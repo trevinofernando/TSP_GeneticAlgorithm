@@ -31,22 +31,18 @@ public class Chromo implements Comparable<Chromo> {
 	public Chromo() {
 
 		// Set gene values to a random sequence of 1's and 0's
-
-		if (!Parameters.problemType.equals("TSP")) {
-			char geneBit;
-			chromo = "";
-			for (int i = 0; i < Parameters.numGenes; i++) {
-				for (int j = 0; j < Parameters.geneSize; j++) {
-					randnum = Search.r.nextDouble();
-					if (randnum > 0.5)
-						geneBit = '0';
-					else
-						geneBit = '1';
-					this.chromo = chromo + geneBit;
-				}
+		char geneBit;
+		chromo = "";
+		for (int i = 0; i < Parameters.numGenes; i++) {
+			for (int j = 0; j < Parameters.geneSize; j++) {
+				randnum = Search.r.nextDouble();
+				if (randnum > 0.5)
+					geneBit = '0';
+				else
+					geneBit = '1';
+				this.chromo = chromo + geneBit;
 			}
 		}
-		
 
 		this.rawFitness = -1; // Fitness not yet evaluated
 		this.sclFitness = -1; // Fitness not yet scaled
@@ -170,30 +166,36 @@ public class Chromo implements Comparable<Chromo> {
 			j = (int) (randnum * Parameters.popSize);
 			return (j);
 		case 2: // Tournament Selection
-			int temp;
-			int candidate[] = new int[4];
-			for (int i = 0; i < 4; ++i)
-				candidate[i] = (int) (Search.r.nextDouble() * Parameters.popSize);
-			for (int i = 3; i > 0; i--) {
-				for (j = 0; j < i; j++) {
-					if (Search.member[candidate[j]].proFitness > Search.member[candidate[j + 1]].proFitness) {
-						temp = candidate[j];
-						candidate[j] = candidate[j + 1];
-						candidate[j + 1] = temp;
-					}
-				}
-			}
-			for (int i = 0; i < 3; i++)
-				if (Search.r.nextDouble() < 0.6)
-					return candidate[i];
-			return candidate[3];
 
-		/*
-		 * case 4: // Rank Selection Arrays.sort(Search.member); randnum =
-		 * Search.r.nextDouble(); k = (int) (randnum * ((Parameters.popSize *
-		 * (Parameters.popSize + 1)) / 2)); for (j = 0; j < Parameters.popSize; j++) {
-		 * rWheel = rWheel + j + 1; if (k < rWheel) return (j); } break;
-		 */
+			// 1. Select X individuals from populations. X = 2 for now
+			randnum = Search.r.nextDouble();
+			j = (int) (randnum * Parameters.popSize);
+			randnum = Search.r.nextDouble();
+			k = (int) (randnum * Parameters.popSize);
+
+			// 2. With probability k, pick higher fit individual. k = 0.75 for now
+			if (Search.member[j].proFitness < Search.member[k].proFitness) {
+				// Swap J and K to have J as the bigger number
+				j = j + k;
+				k = j - k;
+				j = j - k;
+			}
+			randnum = Search.r.nextDouble();
+			if (randnum > 0.75)
+				return (k); // return low fit number
+			else
+				return (j); // return high fit number
+
+		case 4: // Rank Selection
+			Arrays.sort(Search.member);
+			randnum = Search.r.nextDouble();
+			k = (int) (randnum * ((Parameters.popSize * (Parameters.popSize + 1)) / 2));
+			for (j = 0; j < Parameters.popSize; j++) {
+				rWheel = rWheel + j + 1;
+				if (k < rWheel)
+					return (j);
+			}
+			break;
 
 		default:
 			System.out.println("ERROR - No selection method selected");
