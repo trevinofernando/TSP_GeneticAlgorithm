@@ -67,21 +67,45 @@ public class TSPChromo extends Chromo implements Comparable<Chromo> {
 
 		switch (Parameters.mutationType) {
 
-		/* case 1: // Replace with new random number
-
-			for (int j = 0; j < (Parameters.geneSize * Parameters.numGenes); j++) {
-				x = this.chromo.charAt(j);
-				randnum = Search.r.nextDouble();
-				if (randnum < Parameters.mutationRate) {
-					if (x == '1')
-						x = '0';
-					else
-						x = '1';
+		case 2:
+				if (Search.r.nextDouble() < Parameters.mutationRate){
+					int oldLoc = Search.r.nextInt(Parameters.numGenes);
+					int newLoc = oldLoc;
+					
+					while (newLoc == oldLoc)
+						int newLoc = Search.r.nextInt(Parameters.numGenes);
+					
+					int city = chromo.get(oldLoc);
+					
+					for (int i = oldLoc; i != newLoc; (++i) % Parameter.numGenes)
+						chromo.set((i+1)%Parameters.numGenes, chromo.get(i));
+					
+					chromo.set(newLoc, city);
 				}
-				mutChromo = mutChromo + x;
-			}
-			this.chromo = mutChromo;
-			break; */
+				break;
+			case 3:
+				if (Search.r.nextDouble() < Parameters.mutationRate){
+					while(windowSize < Parameters.geneSize && windowSize != 0) 
+						int windowSize = Search.r.nextInt(Parameters.numGenes*(Paramaters.DMWindowEnd-Parameters.DMWindowBegin)) + Parameters.DMWindowBegin;
+
+					int windowLoc = Search.r.nextInt(Parameters.numGenes);
+
+					int newLoc = Search.r.nextInt(Parameters.numGenes);
+					
+					int window[] = new int[windowSize];
+					for (int i = 0; i<windowSize; i++)
+						window[i] = chromo.get((windowLoc+i)%Parameters.numGenes); 
+					int temp;
+					for (int i = windowLoc; i != newLoc; i = (i==Parameters.numGenes)?1:i++){
+						temp = chromo.get(i);
+						chromo.set(i, chromo.get(i+windowSize)%Parameters.numGenes);
+						chromo.set((i+windowSize)%Parameters.numGenes, temp);
+					}
+					
+					for (int i = 0; i<windowSize; i++)
+						chromo.set((i+newLoc)%Parameters.numGenes, window[i]);
+				}
+				break;
 
 		default:
 			System.out.println("ERROR - No mutation method selected");
@@ -115,22 +139,24 @@ public class TSPChromo extends Chromo implements Comparable<Chromo> {
 			randnum = Search.r.nextDouble();
 			j = (int) (randnum * Parameters.popSize);
 			return (j);
-		/* case 2: // Tournament Selection
-			int candidate[4], temp;
-			for (int i=0; i<4; ++i)
-				candidate[i] = (int) (Search.r.nextDouble()*Parameters.popSize);
+		case 2: // Tournament Selection
+			int temp;
+			int candidate[] = new int[4];
+			for (int i = 0; i < 4; ++i)
+				candidate[i] = (int) (Search.r.nextDouble() * Parameters.popSize);
 			for (int i = 3; i > 0; i--) {
-				for (int j = 0; j < i; j++) {
-					if (Search.member[candidate[j]].proFitness > Search.member[candidate[j+1]].proFitness) {
-						temp = candidatej[j];
+				for (j = 0; j < i; j++) {
+					if (Search.member[candidate[j]].proFitness > Search.member[candidate[j + 1]].proFitness) {
+						temp = candidate[j];
 						candidate[j] = candidate[j + 1];
-						candidate[j + 1] = temp;					}
+						candidate[j + 1] = temp;
+					}
 				}
 			}
-			for (int i = 0; i<3; i++)
-				if (Search.r.nextDouble()<0.6)
+			for (int i = 0; i < 3; i++)
+				if (Search.r.nextDouble() < 0.6)
 					return candidate[i];
-			return candidate[3]; */
+			return candidate[3];
 
 
 		/*case 4: // Rank Selection
