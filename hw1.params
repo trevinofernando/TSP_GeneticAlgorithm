@@ -1,6 +1,6 @@
 Experiment ID                :Traveling_Salesman
 Problem Type                 :TSP
-Data Input File Name         :../Inputs/att48.tsp
+Data Input File Name         :Inputs/att48.tsp
 Number of Runs               :5
 Generations per Run          :100
 Population Size              :100
@@ -32,11 +32,10 @@ Notes:
 							3 = Uniform Crossover
 							4 = OX1
 
-
 4)  Crossover Rates from 0 to 1, Use "0" to turn off crossover
 
 5)  Mutation Type Codes     1 = Flip Bit
-							              2 = ISM + DM
+							2 = ISM + DM
 
 6)  Mutation Rates from 0 to 1, Use "0" to turn off mutation (Doesn't do anything if mutation type = 2)
 

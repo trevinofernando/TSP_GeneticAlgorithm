@@ -110,7 +110,7 @@ public class Search {
 		r.setSeed(Parameters.seed);
 		memberIndex = new int[Parameters.popSize];
 		memberFitness = new double[Parameters.popSize];
-		if (!Parameter.problemType.equals("TSP"){
+		if (!Parameters.problemType.equals("TSP")) {
 			member = new Chromo[Parameters.popSize];
 			child = new Chromo[Parameters.popSize];
 		}
