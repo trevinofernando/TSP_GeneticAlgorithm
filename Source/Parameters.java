@@ -85,10 +85,8 @@ public class Parameters {
 
 		mutationRate = Double.parseDouble(parmInput.readLine().substring(30).trim());// from 0 to 1, Use "0" to turn off
 		
-		if (mutationType == 3){
-			DMWindowBegin = Double.parseDouble(parmInput.readLine().substring(30).trim());
-			DMWindowEnd = Double.parseDouble(parmInput.readLine().substring(30).trim());
-		}
+		DMWindowBegin = Double.parseDouble(parmInput.readLine().substring(30).trim());
+		DMWindowEnd = Double.parseDouble(parmInput.readLine().substring(30).trim());
 
 																						// mutation
 
@@ -190,10 +188,6 @@ public class Parameters {
 		output.write("Crossover Rate               :  " + xoverRate + "\n");
 		output.write("Mutation Type                :  " + mutationType + "\n");
 		output.write("Mutation Rate                :  " + mutationRate + "\n");
-		if (problemType.equals("TSP")){
-			output.write("Mutation Rate ISM            :  " + mutationRateISM + "\n");
-			output.write("Mutation Rate DM             :  " + mutationRateDM + "\n");
-		}
 
 		output.write("Random Number Seed           :  " + seed + "\n");
 		output.write("Number of Genes/Points       :  " + numGenes + "\n");

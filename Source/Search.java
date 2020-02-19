@@ -82,6 +82,12 @@ public class Search {
 		FileWriter summaryOutput = new FileWriter(summaryFileName);
 		parmValues.outputParameters(summaryOutput);
 
+		//  Write Stats To Output CSV File (RunIndex, GenIndex, MemberIndex, rawFitness)
+		String statsFileName = Parameters.expID + "_stats.csv";
+		FileWriter statsOutput = new FileWriter(statsFileName);
+		statsOutput.write("R,G,I,F\n");
+		StringBuilder statsBuilder = new StringBuilder();
+
 		// Set up Fitness Statistics matrix
 		fitnessStats = new double[4][Parameters.generations];
 		for (int i = 0; i < Parameters.generations; i++) {
@@ -95,11 +101,7 @@ public class Search {
 		// the appropriate class file (extending FitnessFunction.java) and add
 		// an else_if block below to instantiate the problem.
 
-		if (Parameters.problemType.equals("NM")) {
-			problem = new NumberMatch();
-		} else if (Parameters.problemType.equals("OM")) {
-			problem = new OneMax();
-		} else if (Parameters.problemType.equals("TSP")) {
+		if (Parameters.problemType.equals("TSP")) {
 			problem = new TSP();
 		} else
 			System.out.println("Invalid Problem Type");
@@ -110,14 +112,8 @@ public class Search {
 		r.setSeed(Parameters.seed);
 		memberIndex = new int[Parameters.popSize];
 		memberFitness = new double[Parameters.popSize];
-		if (!Parameters.problemType.equals("TSP")) {
-			member = new Chromo[Parameters.popSize];
-			child = new Chromo[Parameters.popSize];
-		}
-		else{
-			member = new TSPChromo[Parameters.popSize];
-			child = new TSPChromo[Parameters.popSize];
-		}
+		member = new Chromo[Parameters.popSize];
+		child = new Chromo[Parameters.popSize];
 		bestOfGenChromo = new Chromo();
 		bestOfRunChromo = new Chromo();
 		bestOverAllChromo = new Chromo();
@@ -162,6 +158,8 @@ public class Search {
 					member[i].proFitness = 0;
 
 					problem.doRawFitness(member[i]);
+
+					statsBuilder.append(R + "," + G + "," + i + "," + member[i].rawFitness + "\n");
 
 					sumRawFitness = sumRawFitness + member[i].rawFitness;
 					sumRawFitness2 = sumRawFitness2 + member[i].rawFitness * member[i].rawFitness;
@@ -385,6 +383,10 @@ public class Search {
 		summaryOutput.write("\n");
 		summaryOutput.close();
 
+		// Output Stats to CSV File
+		statsOutput.write(statsBuilder.toString());
+		statsOutput.close();
+		
 		System.out.println();
 		System.out.println("Start:  " + startTime);
 		dateAndTime = Calendar.getInstance();

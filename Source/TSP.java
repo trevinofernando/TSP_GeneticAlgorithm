@@ -34,7 +34,7 @@ public TSP(){
 
 //  COMPUTE A CHROMOSOME'S RAW FITNESS *************************************
 
-public void doRawFitness(TSPChromo X){
+public void doRawFitness(Chromo X){
     X.rawFitness = 0;
     for (int z=0; z<Parameters.numGenes-1; z++){
         X.rawFitness += Parameters.distance[X.chromo.get(z)][X.chromo.get(z+1)];
@@ -44,7 +44,7 @@ public void doRawFitness(TSPChromo X){
 
 //  PRINT OUT AN INDIVIDUAL GENE TO THE SUMMARY FILE *********************************
 
-public void doPrintGenes(TSPChromo X, FileWriter output) throws java.io.IOException{
+public void doPrintGenes(Chromo X, FileWriter output) throws java.io.IOException{
 //TODO
     for (int i=0; i<Parameters.numGenes; i++){
         Hwrite.right(X.chromo.get(i),11,output);

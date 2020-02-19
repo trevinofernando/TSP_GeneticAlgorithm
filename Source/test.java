@@ -13,15 +13,13 @@ public class test {
         int xoverPoint1;
         int xoverPoint2;
         Random r = new Random();
-        TSPChromo parent1 = new TSPChromo();
-        TSPChromo parent2 = new TSPChromo();
-        TSPChromo child1 = new TSPChromo();
-        TSPChromo child2 = new TSPChromo();
+        Chromo parent1 = new Chromo();
+        Chromo parent2 = new Chromo();
+        Chromo child1 = new Chromo();
+        Chromo child2 = new Chromo();
 
         System.out.println(parent1.chromo);
         System.out.println(parent2.chromo);
-        System.out.println(child1.chromo);
-        System.out.println(child2.chromo);
 
         do {				
             xoverPoint1 = r.nextInt(Parameters.numGenes);
@@ -34,6 +32,9 @@ public class test {
             xoverPoint1 = xoverPoint2;
             xoverPoint2 = tmp;				
         }
+
+        System.out.println(xoverPoint1);
+        System.out.println(xoverPoint2);
 
         List<Integer> child1_temp = new ArrayList<Integer>(xoverPoint2 - xoverPoint1 + Parameters.numGenes + 1);
         List<Integer> child2_temp = new ArrayList<Integer>(xoverPoint2 - xoverPoint1 + Parameters.numGenes + 1);
@@ -63,8 +64,6 @@ public class test {
 
         
         System.out.println("---------------------");
-        System.out.println(xoverPoint1);
-        System.out.println(xoverPoint2);
         System.out.println(child1.chromo);
         System.out.println(child2.chromo);
     }
