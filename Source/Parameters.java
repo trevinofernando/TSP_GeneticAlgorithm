@@ -84,11 +84,11 @@ public class Parameters {
 		mutationType = Integer.parseInt(parmInput.readLine().substring(30).trim());// 1 = Flip Bit
 
 		mutationRate = Double.parseDouble(parmInput.readLine().substring(30).trim());// from 0 to 1, Use "0" to turn off
-		
+
 		DMWindowBegin = Double.parseDouble(parmInput.readLine().substring(30).trim());
 		DMWindowEnd = Double.parseDouble(parmInput.readLine().substring(30).trim());
 
-																						// mutation
+		// mutation
 
 		seed = Long.parseLong(parmInput.readLine().substring(30).trim());
 
@@ -120,23 +120,22 @@ public class Parameters {
 			} else {
 				System.out.println("\n" + numCities + "cities found.\nPlease wait...");
 			}
-			distance = new double[numCities + 1][numCities + 1]; // city 0 is a ghost city
+			distance = new double[numCities][numCities]; // city 0 is a ghost city
 
 			String cityInfo[];
 			int i = 0, x = 0, y = 1;
-			double citiesCoordinates[][] = new double[numCities + 1][2];
+			double citiesCoordinates[][] = new double[numCities][2];
 
 			while (i < numCities) {
 				line = br.readLine();
 				cityInfo = line.split(" ");
-				i++;
 				citiesCoordinates[i][x] = Double.valueOf(cityInfo[1]); // x coordinate
 				citiesCoordinates[i][y] = Double.valueOf(cityInfo[2]); // y coordinate
+				i++;
 			}
 
-			// padding city 0 as a ghost city
-			for (int j = 1; j <= numCities; j++) {
-				for (int k = 1; k <= numCities; k++) {
+			for (int j = 0; j < numCities; j++) {
+				for (int k = 0; k < numCities; k++) {
 					distance[j][k] = Distance(citiesCoordinates[j][x], citiesCoordinates[j][y], citiesCoordinates[k][x],
 							citiesCoordinates[k][y]);
 					// System.out.println("Calculating distance between: City "j + " and " + k +
