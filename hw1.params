@@ -10,7 +10,7 @@ Crossover Type (3)           :1
 Crossover Rate (4)           :0.8
 Mutation Type (5)            :1
 Mutation Rate (6)            :0.4
-DM Window Begin(7)           :0
+DM Window Begin(7)           :0.1
 DM Window End(7)             :0.2
 Random Number Seed           :75982
 Number of Genes/Points (8)   :48
@@ -32,7 +32,8 @@ Notes:
 
 4)  Crossover Rates from 0 to 1, Use "0" to turn off crossover
 
-5)  Mutation Type Codes     1 = ISM + DM
+5)  Mutation Type Codes     1 = ISM
+							2 = DM
 
 6)  Mutation Rates from 0 to 1, Use "0" to turn off mutation (Doesn't do anything if mutation type = 2)
 
