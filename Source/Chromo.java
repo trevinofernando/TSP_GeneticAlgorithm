@@ -76,7 +76,7 @@ public class Chromo implements Comparable<Chromo> {
 				int city = chromo.get(oldLoc);
 				
 				for (int i = oldLoc; i != newLoc; i = (++i) % Parameters.numGenes)
-					chromo.set((i+1)%Parameters.numGenes, chromo.get(i));
+					chromo.set(i, chromo.get((i+1)%Parameters.numGenes));
 				
 				chromo.set(newLoc, city);
 			}
