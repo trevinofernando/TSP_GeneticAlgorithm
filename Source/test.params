@@ -8,7 +8,7 @@ Selection Method (1)         :2
 Fitness Scaling Type (2)     :1
 Crossover Type (3)           :1
 Crossover Rate (4)           :0.8
-Mutation Type (5)            :1
+Mutation Type (5)            :2
 Mutation Rate (6)            :1
 DM Window Begin(7)           :0.1
 DM Window End(7)             :0.2
@@ -37,11 +37,8 @@ Notes:
 
 6)  Mutation Rates from 0 to 1, Use "0" to turn off mutation (Doesn't do anything if mutation type = 2)
 
-7)  Probability of **at least** 1 ISM is p, probability of n+1 ISMs given n ISMs is p, prob (0) = 1-p. Probability is per individual
+7)  DM Window begin and end: This is a range in [0,1] representing the range that the window of displacement will take. A random number will be be chosen between begin and end and then multiplied by the total amount of cities
 
-8)  Probability of 1 DM is p, prob of 0 is 1-p, size of DM window is cities/10
+8)  Represents number of genes in each chromosome. (number of cities if problem is TSP)
 
-9)  Represents number of genes in each chromosome. (number of cities if problem is TSP)
-
-10) Determines number of bits in each gene.  Number of Genes times Size
-	gives the number of bits in each chromosome. (doesn't do anything for TSP)
+9) Determines number of bits in each gene.  Number of Genes times Size

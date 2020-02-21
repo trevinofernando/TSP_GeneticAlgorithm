@@ -86,30 +86,31 @@ public class Chromo implements Comparable<Chromo> {
 				int windowSize;
 				//TODO this part needs review DMWindowBegin and DMWindowEnd are double, but window size is int
 				do {
-					windowSize = Search.r.nextInt((int)(Parameters.numGenes*(Parameters.DMWindowEnd-Parameters.DMWindowBegin))) + (int)Parameters.DMWindowBegin;
-				} while (windowSize >= Parameters.geneSize || windowSize == 0);
+					windowSize = Search.r.nextInt((int)(Parameters.numGenes*(Parameters.DMWindowEnd-Parameters.DMWindowBegin)));
+				        windowSize += (int)(Parameters.numGenes * Parameters.DMWindowBegin);
+				} while (windowSize >= Parameters.geneSize || windowSize <= 0);
 										
 
 				int windowLoc = Search.r.nextInt(Parameters.numGenes);
 
-				int newLoc = Search.r.nextInt(Parameters.numGenes);
-				
-				int window[] = new int[windowSize];
-				for (int i = 0; i<windowSize; i++)
-					window[i] = chromo.get((windowLoc+i)%Parameters.numGenes); 
-				int temp;
-				for (int i = windowLoc; i != newLoc; i++){
-					if (i==Parameters.numGenes) {
-						i = 0;
-					}
-					temp = chromo.get(i);
-					//TODO I get java.lang.IndexOutOfBoundsException here
-					chromo.set(i, chromo.get(i+windowSize)%Parameters.numGenes);
-					chromo.set((i+windowSize)%Parameters.numGenes, temp);
+				int newSequence[] = new int[Parameters.numGenes];
+				if ((windowLoc+windowSize) > Parameters.numGenes)
+					for (int i = (windowLoc + windowSize)%Parameters.numGenes; i != windowLoc; i++)
+						newSequence[i-(windowLoc + windowSize)%Parameters.numGenes] = chromo.get(i);
+				else{
+					for (int i =0; i<windowLoc; i++)
+						newSequence[i] = chromo.get(i);
+					for (int i = windowLoc+windowSize; i!=Parameters.numGenes; i++)
+						newSequence[i-windowSize] = chromo.get(i);
 				}
-				
+				int newLoc = Search.r.nextInt(Parameters.numGenes - windowSize);
+				for (int i = Parameters.numGenes - 1; i != newLoc+windowSize - 1; i--)
+					newSequence[i] = newSequence[i-windowSize];
 				for (int i = 0; i<windowSize; i++)
-					chromo.set((i+newLoc)%Parameters.numGenes, window[i]);
+					newSequence[i+newLoc] = chromo.get((windowLoc+i)%Parameters.numGenes);
+				
+				for (int i = 0; i<Parameters.numGenes; i++)
+					chromo.set(i, newSequence[i]);
 			}
 			break;
 
