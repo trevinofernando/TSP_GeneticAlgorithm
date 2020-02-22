@@ -65,7 +65,6 @@ public class Chromo implements Comparable<Chromo> {
 		switch (Parameters.mutationType) {
 
 		case 1:
-		// TODO it sees this operation generates some invalid solutions
 			if (Search.r.nextDouble() < Parameters.mutationRate){
 				int oldLoc = Search.r.nextInt(Parameters.numGenes);
 				int newLoc = oldLoc;
@@ -84,7 +83,6 @@ public class Chromo implements Comparable<Chromo> {
 		case 2:
 			if (Search.r.nextDouble() < Parameters.mutationRate){
 				int windowSize;
-				//TODO this part needs review DMWindowBegin and DMWindowEnd are double, but window size is int
 				do {
 					windowSize = Search.r.nextInt((int)(Parameters.numGenes*(Parameters.DMWindowEnd-Parameters.DMWindowBegin)));
 				        windowSize += (int)(Parameters.numGenes * Parameters.DMWindowBegin);
@@ -231,6 +229,13 @@ public class Chromo implements Comparable<Chromo> {
 				child2.chromo.set(index, child2_temp.get(i - xoverPoint1));
 			}
 			break;
+			
+		case 2: // Genetic Edge Recombination Crossover (ER)
+			
+			edgeRecombination(parent1, parent2, child1);
+			edgeRecombination(parent1, parent2, child2);
+			
+			break;
 		default:
 			System.out.println("ERROR - Bad crossover method selected");
 		}
@@ -242,6 +247,63 @@ public class Chromo implements Comparable<Chromo> {
 		child2.rawFitness = -1; // Fitness not yet evaluated
 		child2.sclFitness = -1; // Fitness not yet scaled
 		child2.proFitness = -1; // Fitness not yet proportionalized
+	}
+
+	private static void edgeRecombination(Chromo parent1, Chromo parent2, Chromo child) {
+
+		HashMap<Integer, HashSet<Integer>> edgeMap = new HashMap<Integer, HashSet<Integer>>(Parameters.numGenes);
+		for (int i = 0; i < Parameters.numGenes; i++) {
+			HashSet<Integer> hash = new HashSet<Integer>();
+			int index = parent1.chromo.indexOf(i+1);
+			hash.add(parent1.chromo.get((index-1+Parameters.numGenes) % Parameters.numGenes));
+			hash.add(parent1.chromo.get((index+1+Parameters.numGenes) % Parameters.numGenes));
+			index = parent2.chromo.indexOf(i+1);
+			hash.add(parent2.chromo.get((index-1+Parameters.numGenes) % Parameters.numGenes));
+			hash.add(parent2.chromo.get((index+1+Parameters.numGenes) % Parameters.numGenes));
+			edgeMap.put(i+1, hash);
+		}
+
+		HashMap<Integer, HashSet<Integer>> candidateEdgeMap = edgeMap;
+		int childIndex = 0;
+		do {
+
+			Integer currentCity;
+
+			if (candidateEdgeMap.size() == 0) {
+				Object[] keys = edgeMap.keySet().toArray();
+				currentCity = (Integer) keys[Search.r.nextInt(keys.length)];
+			} else {
+				ArrayList<Integer> minKeys = new ArrayList<Integer>();
+				int minVal = Integer.MAX_VALUE;
+				for (HashMap.Entry<Integer, HashSet<Integer>> entry : candidateEdgeMap.entrySet()) {
+					int edgeMapSize = entry.getValue().size();
+					if (edgeMapSize < minVal) {
+						minVal = edgeMapSize;
+						minKeys.clear();
+						minKeys.add(entry.getKey());
+					} else if (edgeMapSize == minVal) {
+						minKeys.add(entry.getKey());
+					}
+				}
+				currentCity = minKeys.get(Search.r.nextInt(minKeys.size()));
+			}
+			
+			child.chromo.set(childIndex, currentCity);
+			childIndex ++;
+			HashSet<Integer> candidates = edgeMap.get(currentCity);
+			edgeMap.remove(currentCity);
+
+			for (HashMap.Entry<Integer, HashSet<Integer>> entry : edgeMap.entrySet()) {
+				HashSet<Integer> hash = entry.getValue();
+				hash.remove(currentCity);
+			}
+
+			candidateEdgeMap = new HashMap<Integer, HashSet<Integer>>();
+			for (Integer entry : candidates) {
+				candidateEdgeMap.put(entry, edgeMap.get(entry));
+			}
+
+		} while (edgeMap.size() > 0);
 	}
 
 	// Produce a new child from a single parent ******************************

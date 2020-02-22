@@ -304,6 +304,13 @@ public class Search {
 
 					break;
 
+				case 4: // Sutract for Minimization
+					for (int i = 0; i < Parameters.popSize; i++) {
+						member[i].sclFitness = 500000 - member[i].rawFitness;
+						sumSclFitness += member[i].sclFitness;
+					}
+					break;
+
 				default:
 					System.out.println("ERROR - No scaling method selected");
 				}
