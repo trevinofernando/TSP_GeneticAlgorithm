@@ -102,7 +102,7 @@ public class Parameters {
 		System.out.println("\nInput File Name is: " + dataInputFileName + "\n");
 		try (BufferedReader br = new BufferedReader(new FileReader(dataInputFileName))) {
 			String line;
-			String dimensionField = "DIMENSION: ";
+			String dimensionField = "DIMENSION : ";
 			int numCities = 0;
 			// Find dimension field
 			while ((line = br.readLine()) != null) {

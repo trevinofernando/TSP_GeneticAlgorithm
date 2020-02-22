@@ -88,7 +88,7 @@ public class Chromo implements Comparable<Chromo> {
 				do {
 					windowSize = Search.r.nextInt((int)(Parameters.numGenes*(Parameters.DMWindowEnd-Parameters.DMWindowBegin)));
 				        windowSize += (int)(Parameters.numGenes * Parameters.DMWindowBegin);
-				} while (windowSize >= Parameters.geneSize || windowSize <= 0);
+				} while (windowSize >= Parameters.numGenes || windowSize <= 0);
 										
 
 				int windowLoc = Search.r.nextInt(Parameters.numGenes);
