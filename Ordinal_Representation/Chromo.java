@@ -66,36 +66,11 @@ public class Chromo implements Comparable<Chromo> {
 
 		switch (Parameters.mutationType) {
 
-		case 1: // Swap
+		case 1: // Random Add/Minus
 			if (Search.r.nextDouble() < Parameters.mutationRate){
-
-				int maxTry = 5;
-
-				ArrayList<Integer> copy = new ArrayList<Integer>(chromo);
-
-				for (int i = 0; i < maxTry; i++) {
-					try {
-						int point1 = Search.r.nextInt(Parameters.numGenes);
-						int point2;
-						do {				
-							point2 = Search.r.nextInt(Parameters.numGenes);				
-						} while (point1 == point2);
-						
-						int tmp;
-						tmp = chromo.get(point1);
-						chromo.set(point1, chromo.get(point2));
-						chromo.set(point2, tmp);
-						//convertToPath(chromo);
-						Search.problem.doRawFitness(this);
-						break;
-					} catch (Exception e) {
-						chromo = copy;
-					}
-					
-				}
-				
-				
-
+				int position = Search.r.nextInt(Parameters.numGenes);
+				int offset = Search.r.nextInt(Parameters.numGenes-position);
+				chromo.set(position, (chromo.get(position)+offset)%(Parameters.numGenes-position));
 			}
 			break;
 
@@ -144,10 +119,10 @@ public class Chromo implements Comparable<Chromo> {
 					}
 				}
 			}
-			for (int i = 0; i < 3; i++)
+			for (int i = 3; i > 0; i--)
 				if (Search.r.nextDouble() < 0.6)
 					return candidate[i];
-			return candidate[3];
+			return candidate[0];
 
 
 		/*case 4: // Rank Selection

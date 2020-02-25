@@ -308,8 +308,12 @@ public class Search {
 					break;
 
 				case 4: // Sutract for Minimization
+					double max = member[0].rawFitness;
+					for (int i = 0; i < Parameters.popSize; i++)
+						if (member[i].rawFitness>max)
+							max = member[i].rawFitness;
 					for (int i = 0; i < Parameters.popSize; i++) {
-						member[i].sclFitness = 500000 - member[i].rawFitness;
+						member[i].sclFitness = max - member[i].rawFitness;
 						sumSclFitness += member[i].sclFitness;
 					}
 					break;
