@@ -1,6 +1,6 @@
 Experiment ID                :Traveling_Salesman
 Problem Type                 :TSP
-Data Input File Name         :Inputs/att48.tsp
+Data Input File Name         :att48.tsp
 Number of Runs               :5
 Generations per Run          :100
 Population Size              :2000
@@ -28,8 +28,7 @@ Notes:
 							3 = Rank for Minimization
 							4 = Sutract for Minimization
 
-3)  Crossover Type Codes    1 = Order Crossover (OX1)
-							2 = Genetic Edge Recombination Crossover (ER)
+3)  Crossover Type Codes    1 = Genetic Edge Recombination Crossover (ER)
 
 
 4)  Crossover Rates from 0 to 1, Use "0" to turn off crossover

@@ -1,12 +1,12 @@
 Experiment ID                :Traveling_Salesman
 Problem Type                 :TSP
-Data Input File Name         :Inputs/att48.tsp
+Data Input File Name         :att48.tsp
 Number of Runs               :5
 Generations per Run          :100
 Population Size              :2000
 Selection Method (1)         :2
 Fitness Scaling Type (2)     :4
-Crossover Type (3)           :1
+Crossover Type (3)           :2
 Crossover Rate (4)           :0.8
 Mutation Type (5)            :1
 Mutation Rate (6)            :0.4
