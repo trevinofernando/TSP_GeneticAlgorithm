@@ -5,11 +5,11 @@ Number of Runs               :5
 Generations per Run          :100
 Population Size              :2000
 Selection Method (1)         :2
-Fitness Scaling Type (2)     :4
+Fitness Scaling Type (2)     :1
 Crossover Type (3)           :1
 Crossover Rate (4)           :0.8
 Mutation Type (5)            :1
-Mutation Rate (6)            :0
+Mutation Rate (6)            :0.1
 DM Window Begin(7)           :0.1
 DM Window End(7)             :0.2
 Random Number Seed           :75982
@@ -33,7 +33,7 @@ Notes:
 
 4)  Crossover Rates from 0 to 1, Use "0" to turn off crossover
 
-5)  Mutation Type Codes     1 = Swap
+5)  Mutation Type Codes     1 = Random Add
 
 6)  Mutation Rates from 0 to 1, Use "0" to turn off mutation (Doesn't do anything if mutation type = 2)
 
