@@ -110,6 +110,6 @@ public class test2 {
 
 		} while (edgeMap.size() > 0);
 
-		child.chromo = Chromo.convertToAdj(child.chromo);
+		child.chromo = Chromo.convertToOrdinal(child.chromo);
 	}
 }

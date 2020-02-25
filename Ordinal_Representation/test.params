@@ -1,15 +1,15 @@
 Experiment ID                :Traveling_Salesman
 Problem Type                 :TSP
-Data Input File Name         :att48.tsp
+Data Input File Name         :../Inputs/att48.tsp
 Number of Runs               :5
 Generations per Run          :100
-Population Size              :2000
+Population Size              :100
 Selection Method (1)         :2
-Fitness Scaling Type (2)     :4
+Fitness Scaling Type (2)     :1
 Crossover Type (3)           :1
 Crossover Rate (4)           :0.8
-Mutation Type (5)            :1
-Mutation Rate (6)            :0.001
+Mutation Type (5)            :2
+Mutation Rate (6)            :1
 DM Window Begin(7)           :0.1
 DM Window End(7)             :0.2
 Random Number Seed           :75982
@@ -26,14 +26,14 @@ Notes:
 							1 = Scale for Minimization (reciprocal of raw fitness)
 							2 = Rank for Maximization
 							3 = Rank for Minimization
-							4 = Sutract for Minimization
 
-3)  Crossover Type Codes    1 = Genetic Edge Recombination Crossover (ER)
+3)  Crossover Type Codes    1 = Order Crossover (OX1)
 
 
 4)  Crossover Rates from 0 to 1, Use "0" to turn off crossover
 
-5)  Mutation Type Codes     1 = DM
+5)  Mutation Type Codes     1 = ISM
+							2 = DM
 
 6)  Mutation Rates from 0 to 1, Use "0" to turn off mutation (Doesn't do anything if mutation type = 2)
 

@@ -39,7 +39,7 @@ public class Chromo implements Comparable<Chromo> {
 
 		Collections.shuffle(chromo);
 
-		chromo = convertToAdj(chromo);
+		chromo = convertToOrdinal(chromo);
 
 		this.rawFitness = -1; // Fitness not yet evaluated
 		this.sclFitness = -1; // Fitness not yet scaled
@@ -66,41 +66,35 @@ public class Chromo implements Comparable<Chromo> {
 
 		switch (Parameters.mutationType) {
 
-		case 1:
+		case 1: // Swap
 			if (Search.r.nextDouble() < Parameters.mutationRate){
-				ArrayList<Integer> c = Chromo.convertToPath(chromo);
 
-				int point1;
-				int point2;
-				do {				
-					point1 = Search.r.nextInt(Parameters.numGenes);
-					point2 = Search.r.nextInt(Parameters.numGenes);				
-				} while ((point1 == point2) || (Math.abs(point1 - point2 + 1) == Parameters.numGenes));
-				
-				if (point1 > point2) {
-					int tmp;
-					tmp = point1;
-					point1 = point2;
-					point2 = tmp;				
-				}
+				int maxTry = 5;
 
-				ArrayList<Integer> subtour = new ArrayList<Integer>(point2 - point1 + 1);
-				
-				for (int i = point1; i < point2 + 1; i++) {
-					subtour.add(c.get(i));
-				}
+				ArrayList<Integer> copy = new ArrayList<Integer>(chromo);
 
-				c.subList(point1, point2 + 1).clear();
-
-				int insertPoint = Search.r.nextInt(c.size() + 1);
-
-				if (insertPoint == c.size()) {
-					c.addAll(subtour);
-				} else {
-					c.addAll(insertPoint, subtour);
+				for (int i = 0; i < maxTry; i++) {
+					try {
+						int point1 = Search.r.nextInt(Parameters.numGenes);
+						int point2;
+						do {				
+							point2 = Search.r.nextInt(Parameters.numGenes);				
+						} while (point1 == point2);
+						
+						int tmp;
+						tmp = chromo.get(point1);
+						chromo.set(point1, chromo.get(point2));
+						chromo.set(point2, tmp);
+						//convertToPath(chromo);
+						Search.problem.doRawFitness(this);
+						break;
+					} catch (Exception e) {
+						chromo = copy;
+					}
+					
 				}
 				
-				chromo = Chromo.convertToAdj(c);
+				
 
 			}
 			break;
@@ -177,15 +171,21 @@ public class Chromo implements Comparable<Chromo> {
 
 	public static void mateParents(int pnum1, int pnum2, Chromo parent1, Chromo parent2, Chromo child1, Chromo child2) {
 
-		int xoverPoint1;
-		int xoverPoint2;
-
 		switch (Parameters.xoverType) {
 			
-		case 1: // Genetic Edge Recombination Crossover (ER)
+		case 1: // Single Point Crossover
 			
-			edgeRecombination(parent1, parent2, child1);
-			edgeRecombination(parent1, parent2, child2);
+			int xoverPoint = Search.r.nextInt(Parameters.numGenes-1);
+			
+			for (int i = 0; i < Parameters.numGenes; i++) {
+				if (i <= xoverPoint) {
+					child1.chromo.set(i, parent1.chromo.get(i));
+					child2.chromo.set(i, parent2.chromo.get(i));
+				} else {
+					child1.chromo.set(i, parent2.chromo.get(i));
+					child2.chromo.set(i, parent1.chromo.get(i));					
+				}
+			}
 			
 			break;
 		default:
@@ -199,74 +199,6 @@ public class Chromo implements Comparable<Chromo> {
 		child2.rawFitness = -1; // Fitness not yet evaluated
 		child2.sclFitness = -1; // Fitness not yet scaled
 		child2.proFitness = -1; // Fitness not yet proportionalized
-	}
-
-	private static void edgeRecombination(Chromo parent1, Chromo parent2, Chromo child) {
-		
-		ArrayList<Integer> p1 = Chromo.convertToPath(parent1.chromo);
-		ArrayList<Integer> p2 = Chromo.convertToPath(parent2.chromo);
-
-		HashMap<Integer, HashSet<Integer>> edgeMap = new HashMap<Integer, HashSet<Integer>>(Parameters.numGenes);
-		for (int i = 0; i < Parameters.numGenes; i++) {
-			HashSet<Integer> hash = new HashSet<Integer>();
-			int index = p1.indexOf(i);
-			hash.add(p1.get((index-1+Parameters.numGenes) % Parameters.numGenes));
-			hash.add(p1.get((index+1+Parameters.numGenes) % Parameters.numGenes));
-			index = p2.indexOf(i);
-			hash.add(p2.get((index-1+Parameters.numGenes) % Parameters.numGenes));
-			hash.add(p2.get((index+1+Parameters.numGenes) % Parameters.numGenes));
-			edgeMap.put(i, hash);
-		}
-
-		HashSet<Integer> candidates = new HashSet<Integer>();
-		candidates.add(p1.get(0));
-		candidates.add(p2.get(0));
-
-		HashMap<Integer, HashSet<Integer>> candidateEdgeMap = edgeMap;
-		int childIndex = 0;
-
-		do {
-
-			candidateEdgeMap = new HashMap<Integer, HashSet<Integer>>();
-			for (Integer entry : candidates) {
-				candidateEdgeMap.put(entry, edgeMap.get(entry));
-			}
-
-			Integer currentCity;
-
-			if (candidateEdgeMap.size() == 0) {
-				Object[] keys = edgeMap.keySet().toArray();
-				currentCity = (Integer) keys[Search.r.nextInt(keys.length)];
-			} else {
-				ArrayList<Integer> minKeys = new ArrayList<Integer>();
-				int minVal = Integer.MAX_VALUE;
-				for (HashMap.Entry<Integer, HashSet<Integer>> entry : candidateEdgeMap.entrySet()) {
-					int edgeMapSize = entry.getValue().size();
-					if (edgeMapSize < minVal) {
-						minVal = edgeMapSize;
-						minKeys.clear();
-						minKeys.add(entry.getKey());
-					} else if (edgeMapSize == minVal) {
-						minKeys.add(entry.getKey());
-					}
-				}
-				currentCity = minKeys.get(Search.r.nextInt(minKeys.size()));
-			}
-			
-			child.chromo.set(childIndex, currentCity);
-			childIndex ++;
-			candidates = edgeMap.get(currentCity);
-			edgeMap.remove(currentCity);
-
-			for (HashMap.Entry<Integer, HashSet<Integer>> entry : edgeMap.entrySet()) {
-				HashSet<Integer> hash = entry.getValue();
-				hash.remove(currentCity);
-			}
-
-		} while (edgeMap.size() > 0);
-
-		child.chromo = Chromo.convertToAdj(child.chromo);
-		
 	}
 
 	// Produce a new child from a single parent ******************************
@@ -294,28 +226,30 @@ public class Chromo implements Comparable<Chromo> {
 		return;
 	}
 
-	public static ArrayList<Integer> convertToPath(ArrayList<Integer> adjRep) {
-		ArrayList<Integer> pathRep = new ArrayList<Integer>(adjRep);		
-		int nextIndex = 0;
-		pathRep.set(0, 0);
-		for (int i = 1; i < Parameters.numGenes; i++) {			
-			pathRep.set(i, adjRep.get(nextIndex));
-			nextIndex = adjRep.get(nextIndex);
-		}
+	public static ArrayList<Integer> convertToPath(ArrayList<Integer> ordRep) {
+		ArrayList<Integer> canonic = new ArrayList<Integer>(Parameters.canonicTour);
+		ArrayList<Integer> pathRep = new ArrayList<Integer>(Parameters.canonicTour.size());
+		
+		for (int i = 0; i < ordRep.size(); i++) {	
+			int index = ordRep.get(i);		
+			pathRep.add(canonic.get(index));
+			canonic.remove(index);
+		}		
 
 		return pathRep;
 	}
 
-	public static ArrayList<Integer> convertToAdj(ArrayList<Integer> pathRep) {
-		ArrayList<Integer> adjRep = new ArrayList<Integer>(pathRep);		
-		int nextIndex = pathRep.get(0);
-		for (int i = 1; i < Parameters.numGenes; i++) {			
-			adjRep.set(nextIndex, pathRep.get(i));
-			nextIndex = pathRep.get(i);
+	public static ArrayList<Integer> convertToOrdinal(ArrayList<Integer> pathRep) {
+		ArrayList<Integer> canonic = new ArrayList<Integer>(Parameters.canonicTour);
+		ArrayList<Integer> ordinal = new ArrayList<Integer>(Parameters.canonicTour.size());
+		
+		for (int i = 0; i < pathRep.size(); i++) {	
+			int index = canonic.indexOf(pathRep.get(i));		
+			ordinal.add(index);
+			canonic.remove(index);
 		}		
-		adjRep.set(nextIndex, pathRep.get(0));
 
-		return adjRep;
+		return ordinal;
 	}
 
 } // End of Chromo.java ******************************************************
