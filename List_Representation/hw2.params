@@ -1,6 +1,6 @@
 Experiment ID                :Traveling_Salesman
 Problem Type                 :TSP
-Data Input File Name         :Inputs/att48.tsp
+Data Input File Name         :att48.tsp
 Number of Runs               :5
 Generations per Run          :100
 Population Size              :2000

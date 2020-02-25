@@ -157,10 +157,10 @@ public class Chromo implements Comparable<Chromo> {
 					}
 				}
 			}
-			for (int i = 0; i < 3; i++)
+			for (int i = 3; i > 0; i--)
 				if (Search.r.nextDouble() < 0.6)
 					return candidate[i];
-			return candidate[3];
+			return candidate[0];
 
 
 		/*case 4: // Rank Selection

@@ -36,10 +36,11 @@ public TSP(){
 
 public void doRawFitness(Chromo X){
     X.rawFitness = 0;
-    for (int z=0; z<Parameters.numGenes-1; z++){
-        X.rawFitness += Parameters.distance[X.chromo.get(z)-1][X.chromo.get(z+1)-1];
+    int nextIndex = 0;
+    for (int z=0; z<Parameters.numGenes; z++) {
+        X.rawFitness += Parameters.distance[nextIndex][X.chromo.get(nextIndex)];
+        nextIndex = X.chromo.get(nextIndex);
     }
-    X.rawFitness += Parameters.distance[X.chromo.get(Parameters.numGenes-1)-1][X.chromo.get(0)-1];
 }
 
 //  PRINT OUT AN INDIVIDUAL GENE TO THE SUMMARY FILE *********************************

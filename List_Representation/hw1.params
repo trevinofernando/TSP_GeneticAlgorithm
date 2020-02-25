@@ -1,19 +1,19 @@
 Experiment ID                :Traveling_Salesman
 Problem Type                 :TSP
-Data Input File Name         :Inputs/att48.tsp
+Data Input File Name         :berlin52.tsp
 Number of Runs               :5
-Generations per Run          :100
+Generations per Run          :200
 Population Size              :2000
 Selection Method (1)         :2
 Fitness Scaling Type (2)     :4
-Crossover Type (3)           :1
-Crossover Rate (4)           :0.8
+Crossover Type (3)           :2
+Crossover Rate (4)           :0.3
 Mutation Type (5)            :1
-Mutation Rate (6)            :0.4
-DM Window Begin(7)           :0.1
-DM Window End(7)             :0.2
+Mutation Rate (6)            :0.35
+DM Window Begin(7)           :0.2
+DM Window End(7)             :0.8
 Random Number Seed           :75982
-Number of Genes/Points (8)   :48
+Number of Genes/Points (8)   :52
 Size of Genes (9)            :9
 
 Notes:
